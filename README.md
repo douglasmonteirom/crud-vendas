@@ -536,7 +536,7 @@ Uma estratégia é pular todos os testes no início e ir implementando um teste 
 
 > :information_source: Para **Vendas**
 
-- O endpoint de produtos deve ser acessível através do caminho (`/sales`);
+- O endpoint de vendas deve ser acessível através do caminho (`/sales`);
 
 <details close>
   <summary>O que será validado</summary>
