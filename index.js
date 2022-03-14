@@ -4,6 +4,7 @@ require('dotenv').config();
 const app = express();
 const productsControllers = require('./controllers/products');
 const salesControllers = require('./controllers/sales');
+const { errorMiddleware } = require('./middlewares/error');
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -17,6 +18,8 @@ app.get('/products/:id', productsControllers.getByID);
 app.get('/sales', salesControllers.getAll);
 
 app.get('/sales/:id', salesControllers.getByID);
+
+app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
   console.log(`Escutando na porta ${process.env.PORT}`);
