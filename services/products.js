@@ -4,7 +4,7 @@ const getAll = async () => {
     const products = await productsModel.getAll();
     if (!products) return { message: 'Produtos não encontrados', code: 404 };
     
-    return products;
+    return { data: products, code: 200 };
 };
 
 const getByID = async (id) => {
@@ -12,7 +12,7 @@ const getByID = async (id) => {
     if (!product || product.length === 0) { 
         return { message: 'Product not found', code: 404 }; 
     }
-    return product;
+    return { data: product, code: 200 };
 };
 
 const create = async (name, quantity) => {
@@ -22,7 +22,7 @@ const create = async (name, quantity) => {
     if (exists) return { message: 'Product already exists', code: 409 };
 
     const responseID = await productsModel.create(name, quantity);
-    return responseID;
+    return { data: { id: responseID, name, quantity }, code: 201 };
 };
 
 const update = async (name, quantity, id) => {
@@ -31,7 +31,18 @@ const update = async (name, quantity, id) => {
         return { message: 'Product not found', code: 404 }; 
     }
     await productsModel.update(id, name, quantity);
-    return { id: Number(id), name, quantity };
+
+    return { data: { id: Number(id), name, quantity }, code: 200 };
+};
+
+const remove = async (id) => {
+  const product = await productsModel.getByID(id);
+  if (!product || product.length === 0) { 
+      return { message: 'Product not found', code: 404 }; 
+  }
+  await productsModel.remove(id);
+
+  return { code: 204 };
 };
 
 module.exports = {
@@ -39,4 +50,5 @@ module.exports = {
     getByID,
     create,
     update,
+    remove,
 };
