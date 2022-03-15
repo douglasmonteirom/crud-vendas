@@ -1,4 +1,5 @@
 const productsService = require('../services/products');
+const productValidates = require('../middlewares/validateProduct');
 
 const getAll = async (_req, res, next) => {
   try {
@@ -27,6 +28,13 @@ const getByID = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
+    const { error } = productValidates.validate(req.body);
+
+    if (error) {
+      const [code, message] = error.message.split('|');
+      return res.status(code).json({ message });
+    }
+    // validação com joi usada na monitoria, código do Gaspar.
     const { name, quantity } = req.body;
     const response = await productsService.create(name, quantity);
 
@@ -37,8 +45,30 @@ const create = async (req, res, next) => {
     next(e);
   }
 };
+
+const update = async (req, res, next) => {
+  try {
+    const { error } = productValidates.validate(req.body);
+
+    if (error) {
+      const [code, message] = error.message.split('|');
+      return res.status(code).json({ message });
+    }
+
+    const { name, quantity } = req.body;
+    const { id } = req.params;
+    const response = await productsService.update(name, quantity, id);
+
+    if (response.message) return res.status(response.code).json({ message: response.message });
+    
+    return res.status(200).json(response);
+  } catch (e) {
+    next(e);
+  }
+}; 
 module.exports = {
     getAll,
     getByID,
     create,
+    update,
 };
