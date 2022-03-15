@@ -55,6 +55,7 @@ describe('Teste Controller - Pega todos os produtos', () => {
 //       productsModel.getByID.restore();
 //     });
 //     it('retorna status 200', async () => {
+        
 //       await productsController.getByID(request, response);
 //       expect(response.status.calledWith(200)).to.be.equal(true);
 //     });

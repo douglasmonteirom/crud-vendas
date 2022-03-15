@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 
 const app = express();
+app.use(express.json());
 const productsControllers = require('./controllers/products');
 const salesControllers = require('./controllers/sales');
 const { errorMiddleware } = require('./middlewares/error');
@@ -12,6 +13,8 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/products', productsControllers.getAll);
+
+app.post('/products', productsControllers.create);
 
 app.get('/products/:id', productsControllers.getByID);
 
