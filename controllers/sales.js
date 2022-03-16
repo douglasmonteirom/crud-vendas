@@ -1,4 +1,5 @@
 const salesService = require('../services/sales');
+const saleValidates = require('../middlewares/validateSale');
 
 const getAll = async (_req, res, next) => {
   try {
@@ -37,8 +38,31 @@ const create = async (req, res, next) => {
   }
 };
 
+const update = async (req, res, next) => {
+  try {
+    const [{ productId, quantity }] = req.body;
+    const { id } = req.params;
+    const { error } = saleValidates.validate({ productId, quantity });
+
+    if (error) {
+      const [code, message] = error.message.split('|');
+      console.log(code, message);
+      return res.status(code).json({ message });
+    }
+
+    const response = await salesService.update(productId, quantity, id);
+
+    if (response.message) return res.status(response.code).json({ message: response.message });
+    
+    return res.status(response.code).json(response.data);
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
     getAll,
     getByID,
     create,
+    update,
 };

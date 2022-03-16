@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 module.exports = Joi.object({
-  productId: Joi.string().min(5).required().messages({
+  productId: Joi.number().positive().required().messages({
     'any.required': '400|"productId" is required',
   }),
   quantity: Joi.number().positive().required()

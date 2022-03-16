@@ -20,8 +20,20 @@ const create = async (sales) => {
 
   return { data: { id: response.id, itemsSold: response.sales }, code: 201 };
 };
+
+const update = async (productId, quantity, saleId) => {
+  const sale = await salesModel.getByID(saleId);
+  if (!sale || sale.length === 0) { 
+      return { message: 'Sale not found', code: 404 }; 
+  }
+  await salesModel.update(saleId, productId, quantity);
+
+  return { data: { saleId: Number(saleId), itemUpdated: [{ productId, quantity }] }, code: 200 };
+};
+
 module.exports = {
   getAll,
   getByID,
   create,
+  update,
 };

@@ -28,6 +28,8 @@ app.post('/sales', salesControllers.create);
 
 app.get('/sales/:id', salesControllers.getByID);
 
+app.put('/sales/:id', salesControllers.update);
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
