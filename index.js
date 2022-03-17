@@ -30,6 +30,8 @@ app.get('/sales/:id', salesControllers.getByID);
 
 app.put('/sales/:id', salesControllers.update);
 
+app.delete('/sales/:id', salesControllers.remove);
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

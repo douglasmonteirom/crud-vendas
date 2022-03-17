@@ -60,9 +60,23 @@ const update = async (req, res, next) => {
   }
 };
 
+const remove = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const response = await salesService.remove(id);
+    if (response.message) return res.status(response.code).json({ message: response.message });
+    
+    return res.status(response.code).json();
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
     getAll,
     getByID,
     create,
     update,
+    remove,
 };
