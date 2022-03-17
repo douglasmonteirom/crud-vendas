@@ -129,7 +129,7 @@ describe('Teste Services - Cria um produto', () => {
     });
     after(() => {
       productsModel.create.restore();
-    });    it('Retorna um obejto', async ()=>{
+    });    it('Verifica se retorna um obejto', async ()=>{
       const serviceResponse = await productsServices.create();
 
       expect(serviceResponse).to.be.an('object');
