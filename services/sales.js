@@ -2,7 +2,7 @@ const salesModel = require('../models/sales');
 
 const getAll = async () => {
   const sales = await salesModel.getAll();
-  if (!sales) return { message: 'Nenhuma venda Cadastrada', code: 404 };
+  if (!sales || sales.length === 0) return { message: 'Nenhuma venda Cadastrada', code: 404 };
 
   return sales;
 };

@@ -1,10 +1,12 @@
 const productsModel = require('../models/products');
 
 const getAll = async () => {
-    const products = await productsModel.getAll();
-    if (!products) return { message: 'Produtos não encontrados', code: 404 };
-    
-    return { data: products, code: 200 };
+  const products = await productsModel.getAll();
+  if (!products || products.length === 0) { 
+    return { message: 'Products not found', code: 404 }; 
+  }     
+  
+  return { data: products, code: 200 };
 };
 
 const getByID = async (id) => {
