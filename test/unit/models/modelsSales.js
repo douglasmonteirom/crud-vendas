@@ -106,3 +106,52 @@ describe('Teste Model - Pega Venda pelo ID', () => {
     });
   });
 });
+
+describe('Teste Model - Cria Venda', () => {
+  describe('Quando cria com sucesso', () => {
+    const listProductsSale =   [
+      {
+        "productId": 2,
+        "quantity": 20
+      },
+      {
+        "productId": 3,
+        "quantity": 50
+      }
+    ] 
+    before(()=>{
+      const saleMock = [
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 6,
+          info: '',
+          serverStatus: 2,
+          warningStatus: 0
+        },
+      ];
+      sinon.stub(conectionDB, 'execute').resolves(saleMock);
+    });
+
+    after(() =>{
+      conectionDB.execute.restore();
+    });
+
+    it('Verifica se retorna um obejto', async () => {
+      const modelResponse = await salesModel.create(listProductsSale);
+      expect(modelResponse).to.be.an('object');
+    });
+    it('Verifica se o objeto tem as chaves "id", "sales"', async ()=>{
+      const modelResponse = await salesModel.create(listProductsSale);
+  
+      expect(modelResponse).to.include.all.keys(
+        'id',
+        'sales',
+        );
+    });
+    it('Verifica se a chave "sales" é um array', async () => {
+      const modelResponse = await salesModel.create(listProductsSale);
+      expect(modelResponse.sales).to.be.an('array');
+    });
+  });
+}); 

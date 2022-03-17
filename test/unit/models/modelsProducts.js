@@ -94,3 +94,31 @@ describe('Teste Model - Pega Produto pelo ID', () => {
     });
   })
 })
+
+describe('Teste Model - Cria produto', () => {
+  describe('Quando cria com sucesso', () => {
+    before(()=>{
+      const productMock = [
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 6,
+          info: '',
+          serverStatus: 2,
+          warningStatus: 0
+        },
+      ];
+      sinon.stub(conectionDB, 'execute').resolves(productMock);
+    });
+
+    after(() =>{
+      conectionDB.execute.restore();
+    });
+
+    it('Verifica se retorna o ID', async () => {
+      const modelResponse = await productsModel.create('produto', 10);
+      console.log(modelResponse);
+      expect(modelResponse).to.be.an('number');
+    });
+  });
+}); 
