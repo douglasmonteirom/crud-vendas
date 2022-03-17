@@ -117,7 +117,6 @@ describe('Teste Model - Cria produto', () => {
 
     it('Verifica se retorna o ID', async () => {
       const modelResponse = await productsModel.create('produto', 10);
-      console.log(modelResponse);
       expect(modelResponse).to.be.an('number');
     });
   });
