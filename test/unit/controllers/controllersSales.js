@@ -114,33 +114,3 @@ describe('Teste Controller - Quando Remove uma venda', () => {
 
   });
 });
-describe('Teste Controller - Quando Cria uma vernda', () => {
-  describe('Quando cria com sucesso', () => {
-    const sales =
-    [
-      {
-        "productId": 2,
-        "quantity": 20
-      },
-      {
-        "productId": 3,
-        "quantity": 50
-      }
-    ]
-    const response = {};
-    const request = {};
-    before(() => {
-      response.status = sinon.stub().returns(response);
-      response.json = sinon.stub().returns();
-      sinon.stub(salesServices, 'create').resolves({ data: { id: '5', itemsSold: sales }, code: 201 });
-    });
-    after(() => {
-      salesServices.create.restore();
-    });
-    it('retorna status 201', async () => {
-      request.body = { sales },  
-      await salesController.create(request, response);
-      expect(response.status.calledWith(201)).to.be.equal(true);
-    });
-  });
-});

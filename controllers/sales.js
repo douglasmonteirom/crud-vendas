@@ -1,4 +1,5 @@
 const salesService = require('../services/sales');
+const quantityValidate = require('../middlewares/validateQuantity');
 const saleValidates = require('../middlewares/validateSale');
 
 const getAll = async (_req, res, next) => {
@@ -28,6 +29,21 @@ const getByID = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
+    const [{ productId, quantity }] = req.body;
+
+    const { error } = saleValidates.validate({ productId, quantity });
+
+    if (error) {
+      const [code, message] = error.message.split('|');
+      console.log(code, message);
+      return res.status(code).json({ message });
+    }
+    const responseValidate = await quantityValidate.valid(productId, quantity);
+
+    if (responseValidate) {
+      return res.status(responseValidate.code).json({ message: responseValidate.message });
+    }
+
     const response = await salesService.create(req.body);
 
     if (response.message) return res.status(response.code).json({ message: response.message });
@@ -46,7 +62,6 @@ const update = async (req, res, next) => {
 
     if (error) {
       const [code, message] = error.message.split('|');
-      console.log(code, message);
       return res.status(code).json({ message });
     }
 

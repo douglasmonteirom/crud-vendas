@@ -1,4 +1,5 @@
 const salesModel = require('../models/sales');
+const productModel = require('../models/products');
 
 const getAll = async () => {
   const sales = await salesModel.getAll();
@@ -15,12 +16,6 @@ const getByID = async (id) => {
   return sale;
 };
 
-const create = async (sales) => {
-  const response = await salesModel.create(sales);
-
-  return { data: { id: response.id, itemsSold: response.sales }, code: 201 };
-};
-
 const update = async (productId, quantity, saleId) => {
   const sale = await salesModel.getByID(saleId);
   if (!sale || sale.length === 0) { 
@@ -29,6 +24,22 @@ const update = async (productId, quantity, saleId) => {
   await salesModel.update(saleId, productId, quantity);
 
   return { data: { saleId: Number(saleId), itemUpdated: [{ productId, quantity }] }, code: 200 };
+};
+
+const updateProducts = async ({ productId, quantity }) => {
+  const product = await productModel.getByID(productId);
+  const updatedProduct = {
+    productId,
+    quantity: product.quantity - quantity,
+  };
+  await productModel.updateProduct(updatedProduct);
+};
+
+const create = async (sales) => {
+  const response = await salesModel.create(sales);
+
+  response.sales.map((s) => updateProducts(s));
+  return { data: { id: response.id, itemsSold: response.sales }, code: 201 };
 };
 
 const remove = async (id) => {
