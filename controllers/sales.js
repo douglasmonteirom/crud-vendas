@@ -35,11 +35,9 @@ const create = async (req, res, next) => {
 
     if (error) {
       const [code, message] = error.message.split('|');
-      console.log(code, message);
       return res.status(code).json({ message });
     }
     const responseValidate = await quantityValidate.valid(productId, quantity);
-
     if (responseValidate) {
       return res.status(responseValidate.code).json({ message: responseValidate.message });
     }

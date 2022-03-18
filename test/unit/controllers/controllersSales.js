@@ -3,6 +3,8 @@ const { expect } = require('chai');
 
 const salesController = require('../../../controllers/sales');
 const salesServices = require('../../../services/sales');
+const quantityValidate = require('../../../middlewares/validateQuantity');
+
 
 describe('Teste Controller - Pega todos as vendas', () => {
   describe('quando encontra produtos cadastrados', () => {
@@ -112,5 +114,34 @@ describe('Teste Controller - Quando Remove uma venda', () => {
       expect(response.status.calledWith(404)).to.be.equal(true);
     });
 
+  });
+});
+describe('Teste Controller - Quando Cria uma vernda', () => {
+  describe('Quando cria com sucesso', () => {
+    const sales =
+    [
+      {
+        "productId": 1,
+        "quantity": 5
+      },
+    ]
+    const response = {};
+    const request = {};
+    let next = () => {};
+    before(() => {
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(salesServices, 'create').resolves({ data: { id: '5', itemsSold: sales }, code: 201 });
+      sinon.stub(quantityValidate, 'valid').resolves(false);
+    });
+    after(() => {
+      salesServices.create.restore();
+      quantityValidate.valid.restore();
+    });
+    it('retorna status 201', async () => {
+      request.body = sales;
+      await salesController.create(request, response, next);
+      expect(response.status.calledWith(201)).to.be.equal(true);
+    });
   });
 });
