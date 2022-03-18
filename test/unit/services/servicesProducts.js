@@ -121,26 +121,3 @@ describe('Teste Services - Pega produto pelo ID', () => {
     });
   });
 });
-describe('Teste Services - Cria um produto', () => {
-  describe('Quando cria com sucesso o prduto', () => {
-    before(() => {
-      const idResponse = 6;
-      sinon.stub(productsModel, 'create').resolves(idResponse);
-    });
-    after(() => {
-      productsModel.create.restore();
-    });
-    it('Verifica se retorna um obejto', async ()=>{
-      const serviceResponse = await productsServices.create();
-
-      expect(serviceResponse).to.be.an('object');
-    });
-    it('Verifica se o objeto tem as chaves "data" e "code"', async ()=>{
-      const serviceResponse = await productsServices.create();
-      expect(serviceResponse).to.include.all.keys(
-        'data',
-        'code'
-        );
-    });
-  });
-});
