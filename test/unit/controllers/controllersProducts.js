@@ -80,6 +80,7 @@ describe('Teste Controller - Quando Remove um produto', () => {
   describe('Quando remove com sucesso', () => {
     const response = {};
     const request = {};
+    next = () => {};
     before(() => {
       response.status = sinon.stub().returns(response);
       response.json = sinon.stub().returns();
@@ -90,7 +91,7 @@ describe('Teste Controller - Quando Remove um produto', () => {
     });
     it('Retorna status 204', async () => {
       request.params = { id: '1' },  
-      await productsController.remove(request, response);
+      await productsController.remove(request, response, next);
       expect(response.status.calledWith(204)).to.be.equal(true);
     });
   });

@@ -18,17 +18,19 @@ const getByID = async (id) => {
 };
 
 const addSale = async (saleId, productId, quantity) => {
-  await connection.execute(
+  const response = connection.execute(
     'INSERT INTO StoreManager.sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)',
     [saleId, productId, quantity],
   );
+  return response;
 };
 
 const create = async (sales) => {
   const [responseDB] = await connection.execute(
     'INSERT INTO StoreManager.sales (date) VALUES (?)', [new Date()],
   );
-  sales.map((s) => addSale(responseDB.insertId, s.productId, s.quantity));
+  const promiseSales = sales.map((s) => addSale(responseDB.insertId, s.productId, s.quantity));
+  await Promise.all(promiseSales);
 
   return { id: responseDB.insertId, sales };
 };

@@ -3,6 +3,8 @@ const { expect } = require('chai');
 
 const salesModel = require('../../../models/sales');
 const salesServices = require('../../../services/sales');
+const productModel = require('../../../models/products');
+
 
 describe('Teste Services - Pega todas as vendas', () => {
   describe('Quando retorna todas as vendas', () => {
@@ -139,25 +141,33 @@ describe('Teste Services - Cria uma venda', () => {
         {
           "productId": 2,
           "quantity": 20
-        },
-        {
-          "productId": 3,
-          "quantity": 50
         }
       ]
       const responseModel = { id: 6, sales };
       sinon.stub(salesModel, 'create').resolves(responseModel);
+      sinon.stub(productModel, 'getByID').resolves(2);
+      sinon.stub(productModel, 'updateProduct').resolves();
     });
     after(() => {
       salesModel.create.restore();
+      productModel.getByID.restore();
     });
     it('Retorna um obejto', async ()=>{
-      const serviceResponse = await salesServices.create();
-
+      const serviceResponse = await salesServices.create([
+        {
+          "productId": 2,
+          "quantity": 20
+        }
+      ]);
       expect(serviceResponse).to.be.an('object');
     });
     it('Verifica se o objeto tem as chaves "data" e "code"', async ()=>{
-      const serviceResponse = await salesServices.create();
+      const serviceResponse = await salesServices.create([
+        {
+          "productId": 2,
+          "quantity": 20
+        }
+      ]);
       expect(serviceResponse).to.include.all.keys(
         'data',
         'code'

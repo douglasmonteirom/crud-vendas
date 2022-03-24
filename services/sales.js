@@ -26,7 +26,7 @@ const update = async (productId, quantity, saleId) => {
   return { data: { saleId: Number(saleId), itemUpdated: [{ productId, quantity }] }, code: 200 };
 };
 
-const updateProducts = async ({ productId, quantity }) => {
+const soldProducts = async ({ productId, quantity }) => {
   const product = await productModel.getByID(productId);
   const updatedProduct = {
     productId,
@@ -35,18 +35,46 @@ const updateProducts = async ({ productId, quantity }) => {
   await productModel.updateProduct(updatedProduct);
 };
 
+const returnedProducts = async ({ productId, quantity }) => {
+  const product = await productModel.getByID(productId);
+  const updatedProduct = {
+    productId,
+    quantity: product.quantity + quantity,
+  };
+  await productModel.updateProduct(updatedProduct);
+};
+
+const validQuantity = async (idProduct, quantityBody) => {
+  const { quantity } = await productModel.getByID(idProduct);
+  if (quantity - quantityBody < 0) { 
+    return { message: 'Such amount is not permitted to sell', code: 422 }; 
+  }
+  return false;
+};
+
 const create = async (sales) => {
+  const promiseValidate = sales.map((p) => validQuantity(p.productId, p.quantity));
+  const resolvedPromises = await Promise.all(promiseValidate);
+  const errorValid = resolvedPromises.find((error) => (error.message !== undefined));
+  if (errorValid) {
+    const { message, code } = errorValid;
+    return { message, code };
+  }
   const response = await salesModel.create(sales);
 
-  response.sales.map((s) => updateProducts(s));
+  const promisesSales = response.sales.map((s) => soldProducts(s));
+  await Promise.all(promisesSales);
   return { data: { id: response.id, itemsSold: response.sales }, code: 201 };
 };
 
 const remove = async (id) => {
-  const product = await salesModel.getByID(id);
-  if (!product || product.length === 0) { 
+  const sale = await salesModel.getByID(id);
+  if (!sale || sale.length === 0) { 
     return { message: 'Sale not found', code: 404 }; 
   }
+  const promisesSales = sale.map((s) => returnedProducts(s));
+  await Promise.all(promisesSales);
+  
   await salesModel.remove(id);
 
   return { code: 204 };

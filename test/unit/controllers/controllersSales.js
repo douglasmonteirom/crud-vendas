@@ -3,7 +3,7 @@ const { expect } = require('chai');
 
 const salesController = require('../../../controllers/sales');
 const salesServices = require('../../../services/sales');
-const quantityValidate = require('../../../middlewares/validateQuantity');
+const salesModel = require('../../../models/sales');
 
 
 describe('Teste Controller - Pega todos as vendas', () => {
@@ -82,17 +82,20 @@ describe('Teste Controller - Quando Remove uma venda', () => {
   describe('Quando remove com sucesso', () => {
     const response = {};
     const request = {};
+    next = () => {}; 
     before(() => {
       response.status = sinon.stub().returns(response);
       response.json = sinon.stub().returns();
       sinon.stub(salesServices, 'remove').resolves({ code: 204 });
+      sinon.stub(salesModel, 'getByID').resolves(1);
     });
     after(() => {
       salesServices.remove.restore();
+      salesModel.getByID.restore();
     });
     it('Retorna status 204', async () => {
       request.params = { id: '1' },  
-      await salesController.remove(request, response);
+      await salesController.remove(request, response, next);
       expect(response.status.calledWith(204)).to.be.equal(true);
     });
 
@@ -132,11 +135,9 @@ describe('Teste Controller - Quando Cria uma vernda', () => {
       response.status = sinon.stub().returns(response);
       response.json = sinon.stub().returns();
       sinon.stub(salesServices, 'create').resolves({ data: { id: '5', itemsSold: sales }, code: 201 });
-      sinon.stub(quantityValidate, 'valid').resolves(false);
     });
     after(() => {
       salesServices.create.restore();
-      quantityValidate.valid.restore();
     });
     it('retorna status 201', async () => {
       request.body = sales;

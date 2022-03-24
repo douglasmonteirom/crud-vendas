@@ -74,7 +74,7 @@ const remove = async (req, res, next) => {
     const response = await productsService.remove(id);
     if (response.message) return res.status(response.code).json({ message: response.message });
     
-    return res.status(response.code).json();
+    return res.status(response.code).end();
   } catch (e) {
     next(e);
   }

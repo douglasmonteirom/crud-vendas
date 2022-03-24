@@ -1,5 +1,4 @@
 const salesService = require('../services/sales');
-const quantityValidate = require('../middlewares/validateQuantity');
 const saleValidates = require('../middlewares/validateSale');
 
 const getAll = async (_req, res, next) => {
@@ -29,23 +28,14 @@ const getByID = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const [{ productId, quantity }] = req.body;
-
-    const { error } = saleValidates.validate({ productId, quantity });
-
+    const sales = req.body;
+    const { error } = saleValidates.schemaArray.validate(sales);
     if (error) {
       const [code, message] = error.message.split('|');
       return res.status(code).json({ message });
     }
-    const responseValidate = await quantityValidate.valid(productId, quantity);
-    if (responseValidate) {
-      return res.status(responseValidate.code).json({ message: responseValidate.message });
-    }
-
-    const response = await salesService.create(req.body);
-
+    const response = await salesService.create(sales);
     if (response.message) return res.status(response.code).json({ message: response.message });
-
     return res.status(response.code).json(response.data);
   } catch (e) {
     next(e);
@@ -54,9 +44,10 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
+    const sales = req.body;
+    const { error } = saleValidates.schemaArray.validate(sales);
     const [{ productId, quantity }] = req.body;
     const { id } = req.params;
-    const { error } = saleValidates.validate({ productId, quantity });
 
     if (error) {
       const [code, message] = error.message.split('|');
@@ -80,7 +71,7 @@ const remove = async (req, res, next) => {
     const response = await salesService.remove(id);
     if (response.message) return res.status(response.code).json({ message: response.message });
     
-    return res.status(response.code).json();
+    return res.status(response.code).end();
   } catch (e) {
     next(e);
   }
