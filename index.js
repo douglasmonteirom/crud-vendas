@@ -7,11 +7,6 @@ const productsControllers = require('./controllers/products');
 const salesControllers = require('./controllers/sales');
 const { errorMiddleware } = require('./middlewares/error');
 
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.send();
-});
-
 app.get('/products', productsControllers.getAll);
 
 app.post('/products', productsControllers.create);
